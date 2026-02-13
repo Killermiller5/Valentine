@@ -11,9 +11,9 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
     font-family:'Poppins',sans-serif;
-    background:#000;
     color:white;
     overflow:hidden;
+    background:#000;
 }
 
 /* PAGE SYSTEM */
@@ -29,30 +29,49 @@ body{
     opacity:0;
     pointer-events:none;
     transition:opacity 1s ease;
+    z-index:1; /* pages above video */
 }
 .active{opacity:1;pointer-events:all;}
 
 /* INCOMING CALL */
 .call-screen{
-    background:#000;
+    background:transparent;
+    z-index:2;
 }
 .caller{
     font-size:2rem;
     margin-bottom:10px;
+    z-index:3;
+    position:relative;
 }
 .call-buttons{
     margin-top:40px;
+    z-index:3;
+    position:relative;
 }
 .call-buttons button{
-    padding:15px 25px;
+    padding:30px 50px;
     border-radius:50px;
     border:none;
-    margin:0 20px;
-    font-size:1rem;
+    margin:0 30px;
+    font-size:1.5rem;
     cursor:pointer;
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    z-index:3;
+    position:relative;
 }
 .accept{background:#2ecc71;}
 .decline{background:#e74c3c;}
+
+/* PULSE ANIMATION */
+.pulse{
+    animation: pulseBtn 1s infinite;
+}
+@keyframes pulseBtn{
+    0%{transform:scale(1); box-shadow:0 0 0 rgba(255,255,255,0);}
+    50%{transform:scale(1.1); box-shadow:0 0 30px rgba(255,255,255,0.7);}
+    100%{transform:scale(1); box-shadow:0 0 0 rgba(255,255,255,0);}
+}
 
 /* MARVIN BACKGROUND */
 .marvin{
@@ -61,14 +80,16 @@ body{
 
 /* PASSWORD */
 input{
-    padding:10px;
+    padding:12px;
     border-radius:20px;
     border:none;
     margin-top:20px;
     text-align:center;
+    z-index:3;
+    position:relative;
 }
 button{
-    padding:12px 28px;
+    padding:20px 40px;
     border-radius:30px;
     border:none;
     background:#2a6df4;
@@ -96,9 +117,7 @@ button{
     align-self:flex-end;
     text-align:right;
 }
-@keyframes fadeIn{
-    to{opacity:1;}
-}
+@keyframes fadeIn{to{opacity:1;}}
 
 /* NO BUTTON ESCAPE */
 #noBtn{position:relative;}
@@ -111,24 +130,73 @@ button{
     background:rgba(255,255,255,0.07);
     animation:fall linear infinite;
 }
-@keyframes fall{
-    from{transform:translateY(-100vh);}
-    to{transform:translateY(100vh);}
+@keyframes fall{from{transform:translateY(-100vh);} to{transform:translateY(100vh);}}
+
+/* CN TOWER VIDEO BACKGROUND */
+#cnTowerBg{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:0;       /* behind everything */
+    opacity:0.7;
+    transition:transform 0.5s ease;
+    pointer-events:none; /* allow clicks through video */
+}
+
+/* SHAKE ANIMATION */
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(5px);}
+    50%{transform:translateX(-5px);}
+    75%{transform:translateX(5px);}
+    100%{transform:translateX(0);}
+}
+.shake{
+    animation:shake 0.5s infinite;
+}
+.zoom-dramatic{
+    transform:scale(1.05);
+}
+
+/* FINAL VALENTINE PAGE IMAGE */
+#valentineImg{
+    width: auto;
+    height: 90vh;           /* fill most of screen height */
+    max-width: 95vw;        /* ensure it doesn't overflow width */
+    object-fit: contain;    /* keep aspect ratio, show full image */
+    border-radius:20px;
+    box-shadow:0 0 30px rgba(0,0,0,0.8);
+    display:block;
+    margin:0 auto;
+    animation: heartPulse 2s infinite;
+}
+@keyframes heartPulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.02);}
 }
 </style>
 </head>
 
 <body>
 
+<!-- CN TOWER VIDEO BACKGROUND -->
+<video id="cnTowerBg" src="CN tower.mp4" autoplay loop muted></video>
+
+<!-- AUDIO -->
+<audio id="bgMusic" src="greedy.mp3"></audio>
+
 <!-- PAGE 0: INCOMING CALL -->
 <div id="callPage" class="page active call-screen">
-    <div class="caller">Drake 📞</div>
+    <div class="caller">ANGEL📞</div>
     <div>Incoming Call…</div>
     <div style="margin-top:10px;font-size:0.9rem;opacity:0.6;">2:17 AM</div>
 
     <div class="call-buttons">
-        <button class="accept" onclick="acceptCall()">Accept</button>
-        <button class="decline" id="declineBtn">Decline</button>
+        <button class="accept pulse" id="acceptBtn" onclick="acceptCall()">Accept</button>
+        <button class="decline pulse" id="declineBtn">Decline</button>
     </div>
 </div>
 
@@ -143,22 +211,20 @@ button{
 <div id="page2" class="page marvin">
     <h2>You called me drunk…</h2>
     <p>So I figured I’d say it sober.</p>
-
-    <iframe width="340" height="200"
-    src="https://www.youtube.com/embed/lutr8QWgwxA?autoplay=1"
-    frameborder="0"
-    allow="autoplay; encrypted-media"
-    allowfullscreen>
-    </iframe>
-
     <button onclick="goToValentine()">Keep Listening...</button>
 </div>
 
 <!-- PAGE 3: IMESSAGE -->
 <div id="page3" class="page marvin">
     <div class="chat" id="chatBox"></div>
-    <button onclick="yesClicked()">Yes 🖤</button>
+    <button onclick="goToFinal()">Yes 🖤</button>
     <button id="noBtn">No</button>
+</div>
+
+<!-- PAGE 4: FINAL VALENTINE IMAGE -->
+<div id="page4" class="page marvin">
+    <h2>Be My Mine
+    <img id="valentineImg" src="ME.jpg" alt="Me">
 </div>
 
 <script>
@@ -166,14 +232,20 @@ button{
 /* TRANSITION */
 function transition(hide,show){
     document.getElementById(hide).classList.remove("active");
-    setTimeout(()=>{
-        document.getElementById(show).classList.add("active");
-    },800);
+    setTimeout(()=>{document.getElementById(show).classList.add("active");},800);
 }
+
+/* SHAKE CN TOWER DURING RINGING */
+const cnTowerBg = document.getElementById("cnTowerBg");
+cnTowerBg.classList.add("shake");
 
 /* CALL */
 function acceptCall(){
     transition("callPage","page1");
+    cnTowerBg.classList.remove("shake");
+    cnTowerBg.classList.add("zoom-dramatic"); // dramatic zoom
+    document.getElementById("acceptBtn").classList.remove("pulse");
+    document.getElementById("declineBtn").classList.remove("pulse");
 }
 
 /* DECLINE RUNS AWAY */
@@ -187,12 +259,12 @@ function checkPassword(){
     if(document.getElementById("password").value==="angel"){
         transition("page1","page2");
         createRain();
-    }else{
-        alert("Wrong number.");
-    }
+        const music = document.getElementById("bgMusic");
+        music.play().catch(()=>{});
+    }else{alert("Wrong number.");}
 }
 
-/* GO TO VALENTINE */
+/* GO TO VALENTINE SONG PAGE */
 function goToValentine(){
     transition("page2","page3");
     startChat();
@@ -207,10 +279,8 @@ function startChat(){
         "I wanna be the one you choose.",
         "So… be my Valentine?"
     ];
-
     let i=0;
     const chatBox=document.getElementById("chatBox");
-
     function showMessage(){
         if(i<messages.length){
             const bubble=document.createElement("div");
@@ -224,16 +294,16 @@ function startChat(){
     showMessage();
 }
 
-/* YES */
-function yesClicked(){
-    alert("Knew it. 🖤");
+/* YES CLICK: GO TO FINAL VALENTINE PAGE */
+function goToFinal(){
+    transition("page3","page4");
 }
 
 /* NO ESCAPES */
 const noBtn=document.getElementById("noBtn");
 noBtn.addEventListener("mouseover",()=>{
-    const x=Math.random()*(window.innerWidth-120);
-    const y=Math.random()*(window.innerHeight-60);
+    const x=Math.random()*(window.innerWidth-160);
+    const y=Math.random()*(window.innerHeight-100);
     noBtn.style.position="absolute";
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
@@ -251,6 +321,5 @@ function createRain(){
 }
 
 </script>
-
 </body>
 </html>

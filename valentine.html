@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2:17 AM 📱</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:'Poppins',sans-serif;
+    background:#000;
+    color:white;
+    overflow:hidden;
+}
+
+/* PAGE SYSTEM */
+.page{
+    position:absolute;
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 1s ease;
+}
+.active{opacity:1;pointer-events:all;}
+
+/* INCOMING CALL */
+.call-screen{
+    background:#000;
+}
+.caller{
+    font-size:2rem;
+    margin-bottom:10px;
+}
+.call-buttons{
+    margin-top:40px;
+}
+.call-buttons button{
+    padding:15px 25px;
+    border-radius:50px;
+    border:none;
+    margin:0 20px;
+    font-size:1rem;
+    cursor:pointer;
+}
+.accept{background:#2ecc71;}
+.decline{background:#e74c3c;}
+
+/* MARVIN BACKGROUND */
+.marvin{
+    background: radial-gradient(circle at center,#101933 0%,#050814 80%);
+}
+
+/* PASSWORD */
+input{
+    padding:10px;
+    border-radius:20px;
+    border:none;
+    margin-top:20px;
+    text-align:center;
+}
+button{
+    padding:12px 28px;
+    border-radius:30px;
+    border:none;
+    background:#2a6df4;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+/* iMESSAGE */
+.chat{
+    width:90%;
+    max-width:400px;
+}
+.bubble{
+    background:#1c1f2e;
+    padding:12px 18px;
+    border-radius:20px;
+    margin:10px 0;
+    text-align:left;
+    opacity:0;
+    animation:fadeIn 1s forwards;
+}
+.bubble.me{
+    background:#2a6df4;
+    align-self:flex-end;
+    text-align:right;
+}
+@keyframes fadeIn{
+    to{opacity:1;}
+}
+
+/* NO BUTTON ESCAPE */
+#noBtn{position:relative;}
+
+/* RAIN */
+.rain{
+    position:fixed;
+    width:2px;
+    height:80px;
+    background:rgba(255,255,255,0.07);
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    from{transform:translateY(-100vh);}
+    to{transform:translateY(100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 0: INCOMING CALL -->
+<div id="callPage" class="page active call-screen">
+    <div class="caller">Drake 📞</div>
+    <div>Incoming Call…</div>
+    <div style="margin-top:10px;font-size:0.9rem;opacity:0.6;">2:17 AM</div>
+
+    <div class="call-buttons">
+        <button class="accept" onclick="acceptCall()">Accept</button>
+        <button class="decline" id="declineBtn">Decline</button>
+    </div>
+</div>
+
+<!-- PAGE 1: PASSWORD -->
+<div id="page1" class="page marvin">
+    <h2>It’s kinda late…</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="checkPassword()">Enter</button>
+</div>
+
+<!-- PAGE 2: SONG -->
+<div id="page2" class="page marvin">
+    <h2>You called me drunk…</h2>
+    <p>So I figured I’d say it sober.</p>
+
+    <iframe width="340" height="200"
+    src="https://www.youtube.com/embed/lutr8QWgwxA?autoplay=1"
+    frameborder="0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+    </iframe>
+
+    <button onclick="goToValentine()">Keep Listening...</button>
+</div>
+
+<!-- PAGE 3: IMESSAGE -->
+<div id="page3" class="page marvin">
+    <div class="chat" id="chatBox"></div>
+    <button onclick="yesClicked()">Yes 🖤</button>
+    <button id="noBtn">No</button>
+</div>
+
+<script>
+
+/* TRANSITION */
+function transition(hide,show){
+    document.getElementById(hide).classList.remove("active");
+    setTimeout(()=>{
+        document.getElementById(show).classList.add("active");
+    },800);
+}
+
+/* CALL */
+function acceptCall(){
+    transition("callPage","page1");
+}
+
+/* DECLINE RUNS AWAY */
+const declineBtn=document.getElementById("declineBtn");
+declineBtn.addEventListener("mouseover",()=>{
+    declineBtn.style.transform="translateX(50px)";
+});
+
+/* PASSWORD */
+function checkPassword(){
+    if(document.getElementById("password").value==="angel"){
+        transition("page1","page2");
+        createRain();
+    }else{
+        alert("Wrong number.");
+    }
+}
+
+/* GO TO VALENTINE */
+function goToValentine(){
+    transition("page2","page3");
+    startChat();
+}
+
+/* IMESSAGE ANIMATION */
+function startChat(){
+    const messages=[
+        "I don’t usually do this.",
+        "But you been on my mind heavy.",
+        "And I don’t wanna be the one you call when you're lonely.",
+        "I wanna be the one you choose.",
+        "So… be my Valentine?"
+    ];
+
+    let i=0;
+    const chatBox=document.getElementById("chatBox");
+
+    function showMessage(){
+        if(i<messages.length){
+            const bubble=document.createElement("div");
+            bubble.className="bubble";
+            bubble.textContent=messages[i];
+            chatBox.appendChild(bubble);
+            i++;
+            setTimeout(showMessage,1500);
+        }
+    }
+    showMessage();
+}
+
+/* YES */
+function yesClicked(){
+    alert("Knew it. 🖤");
+}
+
+/* NO ESCAPES */
+const noBtn=document.getElementById("noBtn");
+noBtn.addEventListener("mouseover",()=>{
+    const x=Math.random()*(window.innerWidth-120);
+    const y=Math.random()*(window.innerHeight-60);
+    noBtn.style.position="absolute";
+    noBtn.style.left=x+"px";
+    noBtn.style.top=y+"px";
+});
+
+/* RAIN */
+function createRain(){
+    for(let i=0;i<60;i++){
+        const drop=document.createElement("div");
+        drop.classList.add("rain");
+        drop.style.left=Math.random()*100+"vw";
+        drop.style.animationDuration=(Math.random()*1+0.5)+"s";
+        document.body.appendChild(drop);
+    }
+}
+
+</script>
+
+</body>
+</html>
